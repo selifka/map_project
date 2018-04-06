@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+	<!-- style.css -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Project JS
+    <link href="project.js"> -->
+
+	<!-- Required Meta tags -->
+  	<title>Google map API test</title>
+  </head>
+
+  <body>
+    <h3>My Google Maps Demo</h3>
+    <div id="map">This is a map of Mississippi!</div>
+
+    <script>
+    function initMap() {
+  
+	  var miss = {lat: 33.0222, lng: -89.7031};
+	  
+	  var map = new google.maps.Map(document.getElementById('map'), {
+	    zoom: 7,
+	    center: miss
+	  });
+
+	  var marker = new google.maps.Marker({
+	    position: miss,
+	    map: map
+	  });
+
+	  var infoWindow = new google.maps.InfoWindow({
+	  	content:'<h1>Central MS</h1>'
+	  });
+
+	  marker.addListener('click', function(){
+	  	infoWindow.open(map,marker);
+	  });
+	}
+	</script>
+		    
+	<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmJACnjlTKQVKWjS_fNOXJ1Z0B2t7q6EE&callback=initMap">
+    </script>
+
+  </body>
+
+</html>
