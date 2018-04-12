@@ -37,41 +37,28 @@
     <div class="container-fluid" id="map"></div>
 
     <script>
-	    function initMap() {
+    function initMap() {
+  
+	  var miss = {lat: 32.7795, lng: -89.7031};
 	  
-		  var miss = {lat: 33.0222, lng: -89.7031};
-		  
-		  var map = new google.maps.Map(document.getElementById('map'), {
-		    zoom: 7,
-		    center: miss
-		  });
+	  var map = new google.maps.Map(document.getElementById('map'), {
+	    zoom: 7,
+	    center: miss
+	  });
 
-		  var layer = new google.maps.FusionTablesLayer({
-		    query: {
-		      select: '\'GEO_ID\'',
-		      from: '1DrR42J6ZUo94v1hNjJiugFqlUZQOqMfkZg74xEUj'
-		    }
-		  });
+	  var layer = new google.maps.FusionTablesLayer({
+	    query: {
+	      select: '\'GEO_ID\'',
+	      from: '1DrR42J6ZUo94v1hNjJiugFqlUZQOqMfkZg74xEUj'
+	    }
+	  });
 
-		  layer.setMap(map);
-
-	  // var marker = new google.maps.Marker({
-	  //   position: miss,
-	  //   map: map
-	  // });
-
-	  // var infoWindow = new google.maps.InfoWindow({
-	  // 	content:'<h3>Central MS</h3>'
-	  // });
-
-	  // marker.addListener('click', function(){
-	  // 	infoWindow.open(map,marker);
-	  // });
+	  layer.setMap(map);
 	}
 	</script>
 		    
 	<script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmJACnjlTKQVKWjS_fNOXJ1Z0B2t7q6EE&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap">
     </script>
 
   </body>
