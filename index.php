@@ -1,6 +1,7 @@
 <?php
 	if(isset($_POST['submit']))
 	{
+		// These are the credentials for a test database on a test dev server, don't worry!
 		$connect = mysqli_connect("127.0.0.1", "root", "2bornot2B",  "mapdb");
 
 		$s_name = $_POST['settlement_name'];
@@ -69,16 +70,15 @@
     <script>
     function initMap() {
 
- 		map = new google.maps.Map(document.getElementById('map'), {
+ 		var map = new google.maps.Map(document.getElementById('map'), {
     		center: new google.maps.LatLng(32.7795,-89.7031),
-    		zoom: 7
+    		zoom: 8
   		});
 
 	    // KML Layer Import
-		var kmlurl = "https://s3.amazonaws.com/kmllayer/ms_counties.kml"; 
+		var kml_url = "https://s3.amazonaws.com/kmllayer/counties_ms.kml"; 
 
-		var KmlLayer = new google.maps.KmlLayer(kmlurl, {
-	  		preserveViewport: false,
+		var Kmllayer = new google.maps.KmlLayer(kml_url, {
 		 	map: map
 		});
 
