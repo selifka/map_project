@@ -1,3 +1,35 @@
+<?php
+
+	if(isset($_POST['search']))
+	{
+		$name = $_POST['name'];
+		$connect = mysqli_connect("127.0.0.1", "root", "2bornot2B",  "mapdb");
+		$query = "SELECT 'county_id' FROM 'settlements' WHERE 'name' = $name";
+		$result = mysqli_query($connect, $query);
+
+		if(mysqli_num_rows($result) > 0)
+		{
+
+			while ($row = mysqli_fetch_array($result))
+			{
+					$county = $row['county_id'];		
+			}
+		} 
+		else 
+		{
+			echo "undefined ID";
+			$name = "";
+		}
+
+		mysqli_free_result($result);
+		mysqli_close($connect);
+	}
+	else
+	{
+		$name = "";
+	}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -24,12 +56,12 @@
 			    		<label>Address or City of Event:</label>
 			    	</div>
 			    	<div class="col-md-6">
-		        		<input class="form-control" type="text" placeholder="Enter address of event here...">
+		        		<input class="form-control" type="text" name="settlement" placeholder="Enter address of event here...">
 		        	</div>
 		        	<div class="col-md-3">
-			      		<input type="submit" value="Submit">
+			      		<input type="submit" name="search" value="Submit">
 			      	</div>
-			      	<div class="col-md-3 py-3">
+		        	<div class="col-md-3 py-3">
 			    		<label>Result:</label>
 			    	</div>
 			      	<div class="col-md-6 py-3">
