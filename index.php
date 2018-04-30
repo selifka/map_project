@@ -37,49 +37,35 @@
   </head>
 
   <body>
-    <div class="container">
-    	<h1 class="py-3 text-center">My Google Maps Demo</h1>
-	  		<form action="index.php" method="post" class="text-center py-5">
-			    <div class="row">
-			    	<div class="col-md-3 py-3">
-			    		<label>Address of Event:</label>
-			    	</div>
-			    	<div class="col-md-6 py-3">
-		        		<input class="form-control" id="address" type="text" value="">
-		        	</div>
-		        	<div class="col-md-3 py-3">
-			      		<input id="submit" type="button" value="Submit">
-			      	</div>
-		        	<div class="col-md-3 py-3">
-			    		<label>County or Counties:</label>
-			    	</div>
-			      	<div class="col-md-9 py-3">
-		        		<input class="form-control" type="text" name="result" value="">
-		        	</div>
-		        	<div class="col-md-3 py-3">
-			    		<label>Ciruit Disctrict for this county:</label>
-			    	</div>
-			      	<div class="col-md-9 py-3">
-		        		<input class="form-control" type="text" name="result2" value="">
-		        	</div>
-		        	<div class="col-md-3 py-3">
-		        		<label>Latitude:</label>
-		        	</div>
-		        	<div class="col-md-9 py-3">
-		        		<label id="lat"></label>
-		        	</div>
-		        	<div class="col-md-3 py-3">
-		        		<label>Longitude:</label>
-		        	</div>
-		        	<div class="col-md-9 py-3">
-		        		<label id="lng"></label>
-		        	</div>
-				</div>
-		  </form>
-	</div>
+    <div class="container-fluid">
+    	<h1 class="py-5 text-center">My Google Maps Demo</h1>
 
-	<!--- Map Div -->
-    <div class="container-fluid" id="map"></div>
+    	<div class="row">
+    		<div class="col-md-4 my-5 py-5">
+	            <form action="index.php" method="post">
+	            	<div class="py-3">
+	        			<input class="form-control" id="address" type="text" value="" placeholder="Address of event">
+	        		</div>
+	        		<div class="py-3">
+		      			<button class="btn btn-outline-primary" id="submit" type="button">Submit</button>
+		      		</div>
+		      		<div class="py-3">
+	        			<input class="form-control" type="text" name="result" value="" placeholder="County">
+	        		</div>
+	        		<div class="py-3">
+	        			<input class="form-control" type="text" name="result2" value="" placeholder="District">
+	        		</div>
+			    </form>
+			    <div class="py-3">
+	        		<input id="lat" class="form-control" type="text" placeholder="Latitude" value="">
+	        	</div>
+	        	<div class="py-3">
+	        		<input id="lng" class="form-control" type="text" placeholder="Longitude" value="">
+	        	</div>
+			</div>
+		    <div class="col-md-8" id="map"></div>
+		</div>
+	</div>
 		    
 	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmJACnjlTKQVKWjS_fNOXJ1Z0B2t7q6EE&callback=initMap"></script>
 
@@ -113,8 +99,8 @@
             	resultsMap.setCenter(results[0].geometry.location);
 
             	// Display the lat and lng in html 
-            	document.getElementById('lat').innerHTML = results[0].geometry.location.lat();
-            	document.getElementById('lng').innerHTML = results[0].geometry.location.lng();
+            	document.getElementById('lat').value = results[0].geometry.location.lat();
+            	document.getElementById('lng').value = results[0].geometry.location.lng();
 
             	var marker = new google.maps.Marker({
               		map: resultsMap,
