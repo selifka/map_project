@@ -1,22 +1,35 @@
-<?php
-	// if(isset($_POST['submit']))
-	// {
-	// 	// These are the credentials for a test database on a test dev server, don't worry!
-	// 	$connect = mysqli_connect("127.0.0.1", "root", "2bornot2B",  "mapdb");
+<?php 
+    // This is just a test DB, don't worry, real database credentials are kept safe!
+    $serverName = "EC2AMAZ-VOONADB\\SQLEXPRESS"; 
+    $connectionInfo = array( "Database"=>"lawproject", "UID"=>"lawuser", "PWD"=>"2bornot2B");
+    $conn = sqlsrv_connect($serverMame, $connectionInfo);
 
-	// 	$s_name = $_POST['settlement_name'];
-	// 	$s_query = "SELECT * FROM settlements WHERE name LIKE '%" .$s_name. "%'";
-	// 	$result = mysqli_query($connect, $s_query);
+    if($conn === false) {
+        die(print_r(sqlsrv_errors(), true));
+    } 
 
-	// 	if($result->num_rows) {
-	// 		while ($row = mysqli_fetch_assoc($result)) {
-	// 			$county = $row['county_id'];
-	// 			$district = $row['district_id'];
-	// 		}
-	// 	} else {
-	// 			echo "That name does not match any city in MS";
-	// 	}
-	// }
+    $address = $_POST['eventaddress'];
+
+    echo $address;
+    
+    // $prepAddr = str_replace(' ', '+', $address);
+    // $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address='.$prepAddr.'&sensor=false');
+    // $output= json_decode($geocode);
+    // $latitude = $output->results[0]->geometry->location->lat;
+    // $longitude = $output->results[0]->geometry->location->lng;
+
+    // echo $latitude;
+
+    $query = "SELECT [state], county FROM USCounties WHERE [state]='MS' AND countygeometry.STContains(geometry::STGeomFromText('POINT (-90.1625747 32.4193019)', 4326)) = 1"; //('POINT (" + lng + " " + lat + ")',
+    $result = sqlsrv_query($conn, $query);
+
+    if (sqlsrv_num_rows($result) === false) {
+        while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+            $county = $row['county'];
+        }
+    } else {
+        echo "<script type='text/javascript'>alert('The county could not be found. Please try again.');</script>";
+    }
 ?>
 
 <!DOCTYPE html>
@@ -38,19 +51,19 @@
 
   <body>
     <div class="container-fluid">
-    	<h1 class="py-5 text-center">My Google Maps Demo</h1>
+    	<h1 class="py-5 text-center">Google Maps Demo</h1>
 
     	<div class="row">
     		<div class="col-md-4 my-5 py-5">
 	            <form action="index.php" method="post">
 	            	<div class="py-3">
-	        			<input class="form-control" id="address" type="text" value="" placeholder="Address of event">
+	        			<input class="form-control" id="address" name="eventaddress" type="text" placeholder="Address of event">
 	        		</div>
 	        		<div class="py-3">
 		      			<button class="btn btn-outline-primary" id="submit" type="button">Submit</button>
 		      		</div>
 		      		<div class="py-3">
-	        			<input class="form-control" type="text" name="result" value="" placeholder="County">
+	        			<input class="form-control" type="text" name="county" value="<?php echo $county;?>" placeholder="County">
 	        		</div>
 	        		<div class="py-3">
 	        			<input class="form-control" type="text" name="result2" value="" placeholder="District">
@@ -81,13 +94,6 @@
         document.getElementById('submit').addEventListener('click', function() {
         	geocodeAddress(geocoder, map);
         });
-
-		var kml_url = "https://s3.amazonaws.com/kmllayer/counties_ms.kml"; 
-
-		var Kmllayer = new google.maps.KmlLayer(kml_url, {
-		 	map: map
-		});
-
     }
 
     function geocodeAddress(geocoder, resultsMap) {
@@ -98,23 +104,52 @@
         	if (status === 'OK') {
             	resultsMap.setCenter(results[0].geometry.location);
 
+            	var lat = results[0].geometry.location.lat();
+            	var lng = results[0].geometry.location.lng();
+
+               // var mycountyname = GetCounty(lng, lat);
+
+
             	// Display the lat and lng in html 
-            	document.getElementById('lat').value = results[0].geometry.location.lat();
-            	document.getElementById('lng').value = results[0].geometry.location.lng();
+            	document.getElementById('lat').value = lat;
+            	document.getElementById('lng').value = lng;
 
             	var marker = new google.maps.Marker({
               		map: resultsMap,
               		position: results[0].geometry.location
             	});
 
-            	resultsMap.setZoom(15);
+            	resultsMap.setZoom(12);
             	resultsMap.panTo(marker.position);
 
           	} else {
             	alert('Geocode was not successful for the following reason: ' + status);
           	}
         });
+
+        //displayKML(resultsMap, "madison"); 
     }
+
+    function displayKML(map, countyname) {
+
+		var kml_url = "https://s3.amazonaws.com/kmlbucketms/" + countyname + ".kml"; 
+
+		var Kmllayer = new google.maps.KmlLayer(kml_url, {
+		 	map: map
+		});
+    }
+
+    // function GetCounty(lng, lat) {
+
+    //     var sql = "SELECT county FROM USCounties WHERE [state]='MS' AND countygeometry.STContains(geometry::STGeomFromText('POINT (" + lng + " " + lat + ")', 4326)) = 1";
+
+    //     alert(sql);
+
+    //     /* insert code to access database */
+
+    //     return "madison";
+    // }
+
     </script>
 
   </body>
