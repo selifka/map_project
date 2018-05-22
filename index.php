@@ -1,35 +1,37 @@
 <?php 
-    // This is just a test DB, don't worry, real database credentials are kept safe!
-    $serverName = "EC2AMAZ-VOONADB\\SQLEXPRESS"; 
-    $connectionInfo = array( "Database"=>"lawproject", "UID"=>"lawuser", "PWD"=>"2bornot2B");
-    $conn = sqlsrv_connect($serverMame, $connectionInfo);
+//     // This is just a test DB, don't worry, real database credentials are kept safe!
+//     $serverName = "EC2AMAZ-VOONADB\\SQLEXPRESS"; 
+//     $connectionInfo = array( "Database"=>"lawproject", "UID"=>"lawuser", "PWD"=>"2bornot2B");
+//     $conn = sqlsrv_connect($serverMame, $connectionInfo);
 
-    if($conn === false) {
-        die(print_r(sqlsrv_errors(), true));
-    } 
+//     if($conn === false) {
+//         die(print_r(sqlsrv_errors(), true));
+//     } 
 
-    $address = $_POST['eventaddress'];
+//     $address = $_POST['eventaddress'];
+//     $prepAddr = str_replace(' ', '+', $address);
+//     $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address='.$prepAddr.'&sensor=false');
+//     $output= json_decode($geocode);
+//     $latitude = $output->results[0]->geometry->location->lat;
+//     $longitude = $output->results[0]->geometry->location->lng;
 
-    echo $address;
-    
-    // $prepAddr = str_replace(' ', '+', $address);
-    // $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address='.$prepAddr.'&sensor=false');
-    // $output= json_decode($geocode);
-    // $latitude = $output->results[0]->geometry->location->lat;
-    // $longitude = $output->results[0]->geometry->location->lng;
+// echo $address;
+//      echo $latitude;
+//      echo $longitude;
 
-    // echo $latitude;
+//     $myquery = "SELECT [state], county FROM USCounties WHERE [state]='MS' AND countygeometry.STContains(geometry::STGeomFromText('POINT (" . $longitude . " " . $latitude . ")', 4326)) = 1"; //('POINT (-90.1625747 32.4193019)',
 
-    $query = "SELECT [state], county FROM USCounties WHERE [state]='MS' AND countygeometry.STContains(geometry::STGeomFromText('POINT (-90.1625747 32.4193019)', 4326)) = 1"; //('POINT (" + lng + " " + lat + ")',
-    $result = sqlsrv_query($conn, $query);
+//     echo $myquery;
 
-    if (sqlsrv_num_rows($result) === false) {
-        while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-            $county = $row['county'];
-        }
-    } else {
-        echo "<script type='text/javascript'>alert('The county could not be found. Please try again.');</script>";
-    }
+//     $result = sqlsrv_query($conn, $myquery);
+
+//     if (sqlsrv_num_rows($result) === false) {
+//         while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+//             $county = $row['county'];
+//         }
+//     } else {
+//         echo "<script type='text/javascript'>alert('The county could not be found. Please try again.');</script>";
+//     }
 ?>
 
 <!DOCTYPE html>
@@ -60,10 +62,10 @@
 	        			<input class="form-control" id="address" name="eventaddress" type="text" placeholder="Address of event">
 	        		</div>
 	        		<div class="py-3">
-		      			<button class="btn btn-outline-primary" id="submit" type="button">Submit</button>
+		      			<button class="btn btn-outline-primary" id="submit" type="submit">Submit</button>
 		      		</div>
 		      		<div class="py-3">
-	        			<input class="form-control" type="text" name="county" value="<?php echo $county;?>" placeholder="County">
+	        			<input class="form-control" id="countybox" type="text" name="county" value="" placeholder="County">
 	        		</div>
 	        		<div class="py-3">
 	        			<input class="form-control" type="text" name="result2" value="" placeholder="District">
@@ -91,13 +93,68 @@
 
         var geocoder = new google.maps.Geocoder();
 
-        document.getElementById('submit').addEventListener('click', function() {
-        	geocodeAddress(geocoder, map);
-        });
+geocodeAddress(geocoder, map);
+
+        // document.getElementById('submit').addEventListener('click', function() {
+        // 	geocodeAddress(geocoder, map);
+        // });
     }
 
     function geocodeAddress(geocoder, resultsMap) {
-        var address = document.getElementById('address').value;
+        // var address = document.getElementById('address').value;
+
+<?php 
+    // This is just a test DB, don't worry, real database credentials are kept safe!
+    $serverName = "EC2AMAZ-VOONADB\\SQLEXPRESS"; 
+    $connectionInfo = array( "Database"=>"lawproject", "UID"=>"lawuser", "PWD"=>"2bornot2B");
+    $conn = sqlsrv_connect($serverMame, $connectionInfo);
+
+    if($conn === false) {
+        die(print_r(sqlsrv_errors(), true));
+    } 
+
+    $address = $_POST['eventaddress'];
+
+if($address === null) {
+    $address = "837 Route Missisquio Bolton-EST, Quebec";
+    $state = "";
+    $county = "Madison";
+} 
+
+
+
+    $prepAddr = str_replace(' ', '+', $address);
+    $geocode=file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address='.$prepAddr.'&sensor=false');
+    $output= json_decode($geocode);
+    $latitude = $output->results[0]->geometry->location->lat;
+    $longitude = $output->results[0]->geometry->location->lng;
+
+// echo $address;
+//      echo $latitude;
+//      echo $longitude;
+
+echo ("var address = '" . $address ."';\n"); 
+echo ("var county = '" . $county ."';\n"); 
+echo ("var state = '" . $state ."';\n"); 
+
+    $myquery = "SELECT [state], county FROM USCounties WHERE [state]='MS' AND countygeometry.STContains(geometry::STGeomFromText('POINT (" . $longitude . " " . $latitude . ")', 4326)) = 1"; //('POINT (-90.1625747 32.4193019)',
+
+ // echo $myquery;
+
+    $result = sqlsrv_query($conn, $myquery);
+
+    if (sqlsrv_num_rows($result) === false) {
+        while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+            $county = $row['county'];
+            $state = $row['state'];
+            echo ("county = '" . $county . "';");
+            echo ("state = '" . $state . "';");
+        }
+    } else {
+        echo "<script type='text/javascript'>alert('The county could not be found. Please try again.');</script>";
+    }
+
+?>
 
         geocoder.geocode({'address': address}, function(results, status) {
 
@@ -107,12 +164,10 @@
             	var lat = results[0].geometry.location.lat();
             	var lng = results[0].geometry.location.lng();
 
-               // var mycountyname = GetCounty(lng, lat);
-
-
             	// Display the lat and lng in html 
             	document.getElementById('lat').value = lat;
             	document.getElementById('lng').value = lng;
+                document.getElementById('countybox').value = county;
 
             	var marker = new google.maps.Marker({
               		map: resultsMap,
@@ -125,31 +180,21 @@
           	} else {
             	alert('Geocode was not successful for the following reason: ' + status);
           	}
+
+
         });
 
-        //displayKML(resultsMap, "madison"); 
+        displayKML(resultsMap, county); 
     }
 
     function displayKML(map, countyname) {
 
-		var kml_url = "https://s3.amazonaws.com/kmlbucketms/" + countyname + ".kml"; 
+		var kml_url = "https://s3.amazonaws.com/kmlbucketms/" + countyname.toLowerCase() + ".kml"; 
 
 		var Kmllayer = new google.maps.KmlLayer(kml_url, {
 		 	map: map
 		});
     }
-
-    // function GetCounty(lng, lat) {
-
-    //     var sql = "SELECT county FROM USCounties WHERE [state]='MS' AND countygeometry.STContains(geometry::STGeomFromText('POINT (" + lng + " " + lat + ")', 4326)) = 1";
-
-    //     alert(sql);
-
-    //     /* insert code to access database */
-
-    //     return "madison";
-    // }
-
     </script>
 
   </body>
