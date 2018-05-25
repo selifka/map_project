@@ -19,16 +19,14 @@
     $longitude = $output->results[0]->geometry->location->lng;
 
     // Query string to get county from DB
-    $myquery = "SELECT [state], county FROM USCounties WHERE [state]='MS' AND countygeometry.STContains(geometry::STGeomFromText('POINT (" . $longitude . " " . $latitude . ")', 4326)) = 1";
+    $myquery = "SELECT county FROM USCounties WHERE countygeometry.STContains(geometry::STGeomFromText('POINT (" . $longitude . " " . $latitude . ")', 4326)) = 1";
+    // $myquery = "SELECT [state], county FROM USCounties WHERE [state]='MS' AND countygeometry.STContains(geometry::STGeomFromText('POINT (" . $longitude . " " . $latitude . ")', 4326)) = 1";
 
     // Query DB
     $result = sqlsrv_query($conn, $myquery);
-    if (sqlsrv_num_rows($result) === false) {
-        while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-            $county = $row['county'];
-            echo $county;
-        }
-    } else {
-        echo "<script type='text/javascript'>alert('The county could not be found. Please try again.')";
+
+    while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+        $county = $row['county'];
+        echo $county;
     }
 ?>
