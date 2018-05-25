@@ -31,7 +31,8 @@
                     <div class="py-3">
                         <button class="btn btn-outline-primary" type="button" id="submit">Submit</button>
                     </div>
-                    <div class="py-3" id="county">
+                    <div class="py-3">
+                        <input class="form-control" type="text" id="county" placeholder="County Name">
                     </div>
                     <div class="py-3">
                         <input class="form-control" type="text" name="result2" placeholder="District">
@@ -54,10 +55,31 @@
         var geocoder = new google.maps.Geocoder();
 
         document.getElementById('submit').addEventListener('click', function() {
-          geocodeAddress(geocoder, map);
+            getCountyPHP();
+            geocodeAddress(geocoder, map);
         });
     }
+    </script>
 
+    <script> 
+    function getCountyPHP() {
+        var address = $("#address").val();
+
+        $.ajax({
+            method: "post",
+            url: "validate.php", 
+            data: { address : address },
+            success: function(data) {
+                var phpCounty = data;
+                $('#county').val(phpCounty);
+                console.log(phpCounty);
+            },
+            async: false
+        });
+    }
+    </script>
+
+    <script>
     function geocodeAddress(geocoder, resultsMap) {
         var address = document.getElementById('address').value;
 
@@ -69,42 +91,27 @@
                   map: resultsMap,
                   position: results[0].geometry.location
                 });
+
                 resultsMap.setZoom(12);
                 resultsMap.panTo(marker.position);
             } else {
                 alert('Geocode was not successful for the following reason: ' + status);
             }
         });
-
-        // displayKML(resultsMap, county); 
+        displayKML(resultsMap, county); 
     }
-
-    // function displayKML(map, countyname) {
-    //     var kml_url = "https://s3.amazonaws.com/kmlbucketms/" + countyname.toLowerCase() + ".kml?key=" + Math.random(); 
-
-    //     console.log(kml_url);
-
-    //     var Kmllayer = new google.maps.KmlLayer(kml_url, {
-    //         map: map
-    //     });
-    // }
     </script>
 
-    <script> 
-    $(document).ready(function() {
-        $("#submit").click(function() {
-            var address = $("#address").val();
+    <script>
+    function displayKML(map, countyname) {
+        var countyname = document.getElementById("county").value;
 
-            $.ajax({
-                method: "post",
-                url: "validate.php", 
-                data: { address : address }
-            })
-            .done(function(data) {
-                $('#county').html(data);
-            });
+        var kml_url = "https://s3.amazonaws.com/kmlbucketms/" + countyname.toLowerCase() + ".kml?key=" + Math.random(); 
+
+        var Kmllayer = new google.maps.KmlLayer(kml_url, {
+            map: map
         });
-    });
+    }
     </script>
 
   </body>
