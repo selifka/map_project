@@ -35,6 +35,9 @@
                         <input class="form-control" type="text" id="county" placeholder="County Name">
                     </div>
                     <div class="py-3">
+                        <input class="form-control" type="text" id="state" placeholder="State">
+                    </div>
+                    <div class="py-3">
                         <input class="form-control" type="text" name="result2" placeholder="District">
                     </div>
                 </form>
@@ -69,10 +72,12 @@
             method: "post",
             url: "validate.php", 
             data: { address : address },
+            dataType: 'json',
             success: function(data) {
-                var phpCounty = data;
+                var phpCounty = data[0];
+                var phpState = data[1];
                 $('#county').val(phpCounty);
-                console.log(phpCounty);
+                $('#state').val(phpState);
             },
             async: false
         });
@@ -105,8 +110,9 @@
     <script>
     function displayKML(map, countyname) {
         var countyname = document.getElementById("county").value;
+        var state = document.getElementById("state").value;
 
-        var kml_url = "https://s3.amazonaws.com/kmlbucketms/" + countyname.toLowerCase() + ".kml?key=" + Math.random(); 
+        var kml_url = "http://kml.hammurabi.tech/" + state + "_" + countyname.toLowerCase() + ".kml?key=" + Math.random();
 
         var Kmllayer = new google.maps.KmlLayer(kml_url, {
             map: map
